@@ -17,13 +17,38 @@ class VertexActions(bpy.types.Menu):
     def draw(self, context):
         layout = self.layout
         pie = layout.menu_pie()
-
-        # Add vertex actions only in mesh edit mode
+           
+         # Merge Vertex by distance only in mesh edit mode
         if context.mode == 'EDIT_MESH':
-            # Toggle subdivision surface modifier in edit mode
-            pie.operator("object.modifier_toggle_viewport", text="Toggle Subdivision Surface", icon='MOD_SUBSURF').modifier = "Subdivision"
+            pie.operator("mesh.remove_doubles", text="Merge by Distance", icon='MOD_SUBSURF')
+
 
 class CustomPieMenu(bpy.types.Menu):
+    bl_label = "Custom Pie Menu"
+    bl_idname = "VIEW3D_MT_custom_pie_menu"
+
+    def draw(self, context):
+        layout = self.layout
+        pie = layout.menu_pie()
+
+        # Add single vertex in mesh edit mode
+        if context.mode == 'EDIT_MESH':
+            pie.operator("mesh.primitive_vert_add", text="Add Single Vertex", icon='VERTEXSEL')
+
+        # Subdivide only in mesh edit mode
+        if context.mode == 'EDIT_MESH':
+            pie.operator("mesh.subdivide", text="Subdivide", icon='MOD_SUBSURF')
+
+        if context.mode == "EDIT_MESH":
+            pie.operator("mesh.vert_connect_path", text="Connect Vertices", icon="VERTEXSEL")
+
+        # Merge at last only in mesh edit mode
+        if context.mode == 'EDIT_MESH':
+            pie.operator("mesh.merge", text="Merge at Last", icon='SNAP_VERTEX').type = 'LAST'
+
+            # Add vertex actions menu only in mesh edit mode
+            pie.menu("VIEW3D_MT_vertex_actions", text="Vertex Actions", icon='VERTEXSEL')
+
     bl_label = "Custom Pie Menu"
     bl_idname = "VIEW3D_MT_custom_pie_menu"
 
@@ -35,7 +60,8 @@ class CustomPieMenu(bpy.types.Menu):
         pie.operator("mesh.primitive_cube_add", text="Add Cube", icon='MESH_CUBE')
     
         # Add empty object operator
-        pie.operator("object.empty_add", text="Add Empty", icon='EMPTY_AXIS').type = 'PLAIN_AXES'
+        if context.mode == 'OBJECT':
+            pie.operator("object.empty_add", text="Add Empty", icon='EMPTY_AXIS').type = 'PLAIN_AXES'
 
         # Add single vertex in mesh edit mode
         if context.mode == 'EDIT_MESH':
