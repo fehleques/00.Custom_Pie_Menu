@@ -21,8 +21,7 @@ class VertexActions(bpy.types.Menu):
         # Add merge vertex by distance in mesh edit mode
         pie.operator("mesh.remove_doubles", text="Merge by Distance", icon='MOD_SUBSURF')
 
-        # Add connect vertices operator in mesh edit mode
-        pie.operator("mesh.vert_connect_path", text="Connect Vertices", icon="VERTEXSEL")
+        
 
 
 class CustomPieMenu(bpy.types.Menu):
@@ -43,6 +42,9 @@ class CustomPieMenu(bpy.types.Menu):
         # Add single vertex operator only in mesh edit mode
         if context.mode == 'EDIT_MESH':
             pie.operator("mesh.primitive_vert_add", text="Add Single Vertex", icon='VERTEXSEL')
+
+            # Add connect vertices operator in mesh edit mode
+            pie.operator("mesh.vert_connect_path", text="Connect Vertices", icon="VERTEXSEL")
 
             # Add subdivide operator only in mesh edit mode
             pie.operator("mesh.subdivide", text="Subdivide", icon='MOD_SUBSURF')
