@@ -18,9 +18,11 @@ class VertexActions(bpy.types.Menu):
         layout = self.layout
         pie = layout.menu_pie()
            
-         # Merge Vertex by distance only in mesh edit mode
-        if context.mode == 'EDIT_MESH':
-            pie.operator("mesh.remove_doubles", text="Merge by Distance", icon='MOD_SUBSURF')
+        # Add merge vertex by distance in mesh edit mode
+        pie.operator("mesh.remove_doubles", text="Merge by Distance", icon='MOD_SUBSURF')
+
+        # Add connect vertices operator in mesh edit mode
+        pie.operator("mesh.vert_connect_path", text="Connect Vertices", icon="VERTEXSEL")
 
 
 class CustomPieMenu(bpy.types.Menu):
@@ -31,56 +33,26 @@ class CustomPieMenu(bpy.types.Menu):
         layout = self.layout
         pie = layout.menu_pie()
 
-        # Add single vertex in mesh edit mode
-        if context.mode == 'EDIT_MESH':
-            pie.operator("mesh.primitive_vert_add", text="Add Single Vertex", icon='VERTEXSEL')
-
-        # Subdivide only in mesh edit mode
-        if context.mode == 'EDIT_MESH':
-            pie.operator("mesh.subdivide", text="Subdivide", icon='MOD_SUBSURF')
-
-        if context.mode == "EDIT_MESH":
-            pie.operator("mesh.vert_connect_path", text="Connect Vertices", icon="VERTEXSEL")
-
-        # Merge at last only in mesh edit mode
-        if context.mode == 'EDIT_MESH':
-            pie.operator("mesh.merge", text="Merge at Last", icon='SNAP_VERTEX').type = 'LAST'
-
-            # Add vertex actions menu only in mesh edit mode
-            pie.menu("VIEW3D_MT_vertex_actions", text="Vertex Actions", icon='VERTEXSEL')
-
-    bl_label = "Custom Pie Menu"
-    bl_idname = "VIEW3D_MT_custom_pie_menu"
-
-    def draw(self, context):
-        layout = self.layout
-        pie = layout.menu_pie()
-
-        # Add cube operator
-        pie.operator("mesh.primitive_cube_add", text="Add Cube", icon='MESH_CUBE')
-    
-        # Add empty object operator
+        # Add cube operator only in object mode
         if context.mode == 'OBJECT':
+            pie.operator("mesh.primitive_cube_add", text="Add Cube", icon='MESH_CUBE')
+
+            # Add empty object operator only in object mode
             pie.operator("object.empty_add", text="Add Empty", icon='EMPTY_AXIS').type = 'PLAIN_AXES'
 
-        # Add single vertex in mesh edit mode
+        # Add single vertex operator only in mesh edit mode
         if context.mode == 'EDIT_MESH':
             pie.operator("mesh.primitive_vert_add", text="Add Single Vertex", icon='VERTEXSEL')
 
-        # Subdivide only in mesh edit mode
-        if context.mode == 'EDIT_MESH':
+            # Add subdivide operator only in mesh edit mode
             pie.operator("mesh.subdivide", text="Subdivide", icon='MOD_SUBSURF')
 
-        # Merge Vertex by distance only in mesh edit mode
-        if context.mode == 'EDIT_MESH':
-            pie.operator("mesh.remove_doubles", text="Merge by Distance", icon='MOD_SUBSURF')
-
-        # Merge at last only in mesh edit mode
-        if context.mode == 'EDIT_MESH':
+            # Add merge at last operator only in mesh edit mode
             pie.operator("mesh.merge", text="Merge at Last", icon='SNAP_VERTEX').type = 'LAST'
 
             # Add vertex actions menu only in mesh edit mode
             pie.menu("VIEW3D_MT_vertex_actions", text="Vertex Actions", icon='VERTEXSEL')
+
 
 # Register function
 def register():
