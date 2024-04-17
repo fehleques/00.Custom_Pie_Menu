@@ -18,8 +18,6 @@ class VertexActions(bpy.types.Menu):
         layout = self.layout
         pie = layout.menu_pie()
 
-        # Add single vertex
-        pie.operator("mesh.primitive_circle_add", text="Add Single Vertex", icon='VERTEXSEL').vertices = 1
 
         # Toggle subdivision surface modifier in edit mode
         # Use an operator to toggle the subdivision modifier visibility in edit mode.
@@ -40,12 +38,26 @@ class CustomPieMenu(bpy.types.Menu):
         # Add empty object operator
         pie.operator("object.empty_add", text="Add Empty", icon='EMPTY_AXIS').type = 'PLAIN_AXES'
 
+        # Add single vertex
+        pie.operator("mesh.primitive_vert_add", text="Add Single Vertex", icon='VERTEXSEL')
+
+        # Subdivide
+        pie.operator("mesh.subdivide", text="Subdivide", icon='MOD_SUBSURF')
+
+        # Merge Vertex by distance
+        pie.operator("mesh.remove_doubles", text="Merge by Distance", icon='MOD_SUBSURF')
+
+        #bpy.ops.mesh.remove_doubles()
+
         # Check if we are in mesh edit mode before showing the merge operator
         if context.active_object and context.active_object.mode == 'EDIT' and context.active_object.type == 'MESH':
             pie.operator("mesh.merge", text="Merge at Last", icon='SNAP_VERTEX').type = 'LAST'
 
             # Add vertex actions menu only in mesh edit mode
             pie.menu("VIEW3D_MT_vertex_actions", text="Vertex Actions", icon='VERTEXSEL')
+
+        
+
 
 # Register function
 def register():
