@@ -1,84 +1,76 @@
 import bpy
 
-bl_info = {
-    "name": "Hotkey 'Alt + W' Custom Pie Menu",
-    "description": "This is a custom pie menu activated with Alt + W",
-    "author": "Fernando Felix",
-    "version": (1, 0),
-    "blender": (4, 1, 0),
-    "location": "3D View -> Alt + W",
-    "category": "Custom Pie Menu"
-}
+class SnapToCursorMenu(bpy.types.Menu):
+    """Submenu for snapping options related to the cursor."""
+    bl_label = "Snap To Cursor"
 
-class VertexActions(bpy.types.Menu):
-    bl_label = "Vertex Actions"
-    bl_idname = "VIEW3D_MT_vertex_actions"
+    def draw(self, context):
+        layout = self.layout
+        layout.operator("view3d.snap_cursor_to_selected", text="Cursor to Selected")
+        layout.operator("view3d.snap_cursor_to_center", text="Cursor to Center")
+        layout.operator("view3d.snap_cursor_to_active", text="Cursor to Active")
+        layout.operator("view3d.snap_cursor_to_grid", text="Cursor to Grid")
+
+class SnapSelectedMenu(bpy.types.Menu):
+    """Submenu for snapping options related to the selected object."""
+    bl_label = "Snap Selected"
+
+    def draw(self, context):
+        layout = self.layout
+        layout.operator("view3d.snap_selected_to_cursor", text="Selected to Cursor")
+        layout.operator("view3d.snap_selected_to_active", text="Selected to Active")
+        layout.operator("view3d.snap_selected_to_grid", text="Selected to Grid")
+
+class SnapActiveMenu(bpy.types.Menu):
+    """Submenu for snapping options related to the active object."""
+    bl_label = "Snap Active"
+
+    def draw(self, context):
+        layout = self.layout
+        layout.operator("view3d.snap_active_to_cursor", text="Active to Cursor")
+        layout.operator("view3d.snap_active_to_selected", text="Active to Selected")
+        layout.operator("view3d.snap_active_to_grid", text="Active to Grid")
+
+class SnapGridMenu(bpy.types.Menu):
+    """Submenu for snapping options related to the grid."""
+    bl_label = "Snap Grid"
+
+    def draw(self, context):
+        layout = self.layout
+        layout.operator("view3d.snap_grid_to_cursor", text="Grid to Cursor")
+        layout.operator("view3d.snap_grid_to_selected", text="Grid to Selected")
+        layout.operator("view3d.snap_grid_to_active", text="Grid to Active")
+
+class SnapToMenu(bpy.types.Menu):
+    """Main snap-to menu."""
+    bl_label = "Snap To"
 
     def draw(self, context):
         layout = self.layout
         pie = layout.menu_pie()
-           
-        # Add merge vertex by distance in mesh edit mode
-        pie.operator("mesh.remove_doubles", text="Merge by Distance", icon='MOD_SUBSURF')
+        # Submenu slices
+        pie.menu("VIEW3D_MT_snap_to_cursor_menu", text="Snap To Cursor", icon='CURSOR')
+        pie.menu("VIEW3D_MT_snap_selected_menu", text="Snap Selected", icon='SNAP_VERTEX')
+        pie.menu("VIEW3D_MT_snap_active_menu", text="Snap Active", icon='SNAP_ACTIVE')
+        pie.menu("VIEW3D_MT_snap_grid_menu", text="Snap Grid", icon='GRID')
 
-        
-
-
-class CustomPieMenu(bpy.types.Menu):
-    bl_label = "Custom Pie Menu"
-    bl_idname = "VIEW3D_MT_custom_pie_menu"
-
-    def draw(self, context):
-        layout = self.layout
-        pie = layout.menu_pie()
-
-        # Add cube operator only in object mode
-        if context.mode == 'OBJECT':
-            pie.operator("mesh.primitive_cube_add", text="Add Cube", icon='MESH_CUBE')
-
-            # Add empty object operator only in object mode
-            pie.operator("object.empty_add", text="Add Empty", icon='EMPTY_AXIS').type = 'PLAIN_AXES'
-
-        # Add single vertex operator only in mesh edit mode
-        if context.mode == 'EDIT_MESH':
-            pie.operator("mesh.primitive_vert_add", text="Add Single Vertex", icon='VERTEXSEL')
-
-            # Add connect vertices operator in mesh edit mode
-            pie.operator("mesh.vert_connect_path", text="Connect Vertices", icon="VERTEXSEL")
-
-            # Add subdivide operator only in mesh edit mode
-            pie.operator("mesh.subdivide", text="Subdivide", icon='MOD_SUBSURF')
-
-            # Add merge at last operator only in mesh edit mode
-            pie.operator("mesh.merge", text="Merge at Last", icon='SNAP_VERTEX').type = 'LAST'
-
-            # Add vertex actions menu only in mesh edit mode
-            pie.menu("VIEW3D_MT_vertex_actions", text="Vertex Actions", icon='VERTEXSEL')
-
-
-# Register function
+# In your registration function, ensure you register the submenus
 def register():
-    bpy.utils.register_class(CustomPieMenu)
-    bpy.utils.register_class(VertexActions)
+    bpy.utils.register_class(SnapToCursorMenu)
+    bpy.utils.register_class(SnapSelectedMenu)
+    bpy.utils.register_class(SnapActiveMenu)
+    bpy.utils.register_class(SnapGridMenu)
+    bpy.utils.register_class(SnapToMenu)
+    # Register other classes here ...
 
-    # Register the keymap
-    wm = bpy.context.window_manager
-    km = wm.keyconfigs.addon.keymaps.new(name='3D View', space_type='VIEW_3D')
-    kmi = km.keymap_items.new('wm.call_menu_pie', 'W', 'PRESS', alt=True)
-    kmi.properties.name = "VIEW3D_MT_custom_pie_menu"
-
-# Unregister function
 def unregister():
-    bpy.utils.unregister_class(CustomPieMenu)
-    bpy.utils.unregister_class(VertexActions)
+    bpy.utils.unregister_class(SnapToCursorMenu)
+    bpy.utils.unregister_class(SnapSelectedMenu)
+    bpy.utils.unregister_class(SnapActiveMenu)
+    bpy.utils.unregister_class(SnapGridMenu)
+    bpy.utils.unregister_class(SnapToMenu)
+    # Unregister other classes here ...
 
-    # Unregister the keymap
-    wm = bpy.context.window_manager
-    km = wm.keyconfigs.addon.keymaps.get('3D View')
-    if km:
-        for kmi in km.keymap_items:
-            if kmi.properties.name == "VIEW3D_MT_custom_pie_menu":
-                km.keymap_items.remove(kmi)
-
+# Ensure you call the register function at the end of your script or run the script directly
 if __name__ == "__main__":
     register()
