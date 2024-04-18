@@ -1,5 +1,15 @@
 import bpy
 
+bl_info = {
+    "name": "Hotkey 'Alt + W' Custom Pie Menu",
+    "description": "This is a custom pie menu activated with Alt + W",
+    "author": "Fernando Felix",
+    "version": (1, 0),
+    "blender": (4, 1, 0),
+    "location": "3D View -> Alt + W",
+    "category": "Custom Pie Menu"
+}
+
 # Define a custom operator to set snap_elements_base to {'VERTEX'}
 class SetSnapToVertexOperator(bpy.types.Operator):
     """Set Snap to Vertex"""
