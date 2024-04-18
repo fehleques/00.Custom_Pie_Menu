@@ -1,76 +1,139 @@
 import bpy
 
-class SnapToCursorMenu(bpy.types.Menu):
-    """Submenu for snapping options related to the cursor."""
-    bl_label = "Snap To Cursor"
+# Define a custom operator to set snap_elements_base to {'VERTEX'}
+class SetSnapToVertexOperator(bpy.types.Operator):
+    """Set Snap to Vertex"""
+    bl_idname = "object.set_snap_to_vertex"
+    bl_label = "Snap to Vertex"
 
-    def draw(self, context):
-        layout = self.layout
-        layout.operator("view3d.snap_cursor_to_selected", text="Cursor to Selected")
-        layout.operator("view3d.snap_cursor_to_center", text="Cursor to Center")
-        layout.operator("view3d.snap_cursor_to_active", text="Cursor to Active")
-        layout.operator("view3d.snap_cursor_to_grid", text="Cursor to Grid")
+    def execute(self, context):
+        context.scene.tool_settings.snap_elements_base = {'VERTEX'}
+        self.report({'INFO'}, "Snap to Vertex enabled")
+        return {'FINISHED'}
 
-class SnapSelectedMenu(bpy.types.Menu):
-    """Submenu for snapping options related to the selected object."""
-    bl_label = "Snap Selected"
+# Define a custom operator to set snap_elements_base to {'FACE'}
+class SetSnapToFaceOperator(bpy.types.Operator):
+    """Set Snap to Face"""
+    bl_idname = "object.set_snap_to_face"
+    bl_label = "Snap to Face"
 
-    def draw(self, context):
-        layout = self.layout
-        layout.operator("view3d.snap_selected_to_cursor", text="Selected to Cursor")
-        layout.operator("view3d.snap_selected_to_active", text="Selected to Active")
-        layout.operator("view3d.snap_selected_to_grid", text="Selected to Grid")
+    def execute(self, context):
+        context.scene.tool_settings.snap_elements_base = {'FACE'}
+        self.report({'INFO'}, "Snap to Face enabled")
+        return {'FINISHED'}
 
-class SnapActiveMenu(bpy.types.Menu):
-    """Submenu for snapping options related to the active object."""
-    bl_label = "Snap Active"
+# Define an operator to toggle subdivision modifier in edit mode
+class ToggleSubdivisionEditModeOperator(bpy.types.Operator):
+    """Toggle Subdivision Modifier in Edit Mode"""
+    bl_idname = "object.toggle_subdivision_edit_mode"
+    bl_label = "Toggle Subdivision in Edit Mode"
 
-    def draw(self, context):
-        layout = self.layout
-        layout.operator("view3d.snap_active_to_cursor", text="Active to Cursor")
-        layout.operator("view3d.snap_active_to_selected", text="Active to Selected")
-        layout.operator("view3d.snap_active_to_grid", text="Active to Grid")
+    def execute(self, context):
+        active_object = context.object
+        
+        if active_object:
+            # Try to access the Subdivision modifier
+            modifier = active_object.modifiers.get("Subdivision")
+            
+            if modifier:
+                # Toggle the show_in_editmode property
+                modifier.show_in_editmode = not modifier.show_in_editmode
+                return {'FINISHED'}
+            else:
+                self.report({'WARNING'}, "Subdivision modifier not found")
+        else:
+            self.report({'WARNING'}, "No active object found")
+        
+        return {'CANCELLED'}
 
-class SnapGridMenu(bpy.types.Menu):
-    """Submenu for snapping options related to the grid."""
-    bl_label = "Snap Grid"
+# Define an operator to toggle auto merge vertices
+class ToggleAutoMergeOperator(bpy.types.Operator):
+    """Toggle the Auto Merge Vertices setting"""
+    bl_idname = "object.toggle_auto_merge"
+    bl_label = "Auto Merge Vertices"
 
-    def draw(self, context):
-        layout = self.layout
-        layout.operator("view3d.snap_grid_to_cursor", text="Grid to Cursor")
-        layout.operator("view3d.snap_grid_to_selected", text="Grid to Selected")
-        layout.operator("view3d.snap_grid_to_active", text="Grid to Active")
+    def execute(self, context):
+        # Toggle the auto merge setting
+        context.scene.tool_settings.use_mesh_automerge = not context.scene.tool_settings.use_mesh_automerge
+        return {'FINISHED'}
 
-class SnapToMenu(bpy.types.Menu):
-    """Main snap-to menu."""
-    bl_label = "Snap To"
+# Define the custom pie menu
+class CustomPieMenu(bpy.types.Menu):
+    """Custom Pie Menu"""
+    bl_label = "Custom Pie Menu"
+    bl_idname = "VIEW3D_MT_custom_pie_menu"
 
     def draw(self, context):
         layout = self.layout
         pie = layout.menu_pie()
-        # Submenu slices
-        pie.menu("VIEW3D_MT_snap_to_cursor_menu", text="Snap To Cursor", icon='CURSOR')
-        pie.menu("VIEW3D_MT_snap_selected_menu", text="Snap Selected", icon='SNAP_VERTEX')
-        pie.menu("VIEW3D_MT_snap_active_menu", text="Snap Active", icon='SNAP_ACTIVE')
-        pie.menu("VIEW3D_MT_snap_grid_menu", text="Snap Grid", icon='GRID')
 
-# In your registration function, ensure you register the submenus
+        # In Object Mode
+        if context.mode == 'OBJECT':
+            # Add custom snap operators
+            pie.operator("object.set_snap_to_vertex", text="Snap to Vertex", icon='VERTEXSEL')
+            pie.operator("object.set_snap_to_face", text="Snap to Face", icon='FACESEL')
+            
+            # Toggle subdivision in edit mode
+            pie.operator("object.toggle_subdivision_edit_mode", text="Toggle Subdivision in Edit Mode", icon='MOD_SUBSURF')
+            
+            # Add a cube
+            pie.operator("mesh.primitive_cube_add", text="Add Cube", icon='MESH_CUBE')
+            
+            # Add an empty
+            pie.operator("object.empty_add", text="Add Empty", icon='EMPTY_AXIS').type = 'PLAIN_AXES'
+            
+            # Add single vertex
+            pie.operator("mesh.primitive_vert_add", text="Add Single Vertex", icon='VERTEXSEL')
+
+        # In Edit Mesh Mode
+        elif context.mode == 'EDIT_MESH':
+            # Toggle auto merge vertices
+            pie.operator("object.toggle_auto_merge", text="Auto Merge Vertices", icon='MOD_SUBSURF')
+            
+            # Cursor to selected
+            pie.operator("view3d.snap_cursor_to_selected", text="Cursor to Selected", icon='CURSOR')
+            
+            # Add connect vertices
+            pie.operator("mesh.vert_connect_path", text="Connect Vertices", icon='VERTEXSEL')
+            
+            # Add subdivide operator
+            pie.operator("mesh.subdivide", text="Subdivide", icon='MOD_SUBSURF')
+            
+            # Merge vertices
+            pie.operator("mesh.merge", text="Merge at Last", icon='SNAP_VERTEX').type = 'LAST'
+
+# Register the operators and menu
 def register():
-    bpy.utils.register_class(SnapToCursorMenu)
-    bpy.utils.register_class(SnapSelectedMenu)
-    bpy.utils.register_class(SnapActiveMenu)
-    bpy.utils.register_class(SnapGridMenu)
-    bpy.utils.register_class(SnapToMenu)
-    # Register other classes here ...
+    bpy.utils.register_class(SetSnapToVertexOperator)
+    bpy.utils.register_class(SetSnapToFaceOperator)
+    bpy.utils.register_class(ToggleSubdivisionEditModeOperator)
+    bpy.utils.register_class(ToggleAutoMergeOperator)
+    bpy.utils.register_class(CustomPieMenu)
+    # Register other operators and classes as necessary.
 
+    # Register the keymap
+    wm = bpy.context.window_manager
+    km = wm.keyconfigs.addon.keymaps.new(name='3D View', space_type='VIEW_3D')
+    kmi = km.keymap_items.new('wm.call_menu_pie', 'W', 'PRESS', alt=True)
+    kmi.properties.name = "VIEW3D_MT_custom_pie_menu"
+
+# Unregister the operators and menu
 def unregister():
-    bpy.utils.unregister_class(SnapToCursorMenu)
-    bpy.utils.unregister_class(SnapSelectedMenu)
-    bpy.utils.unregister_class(SnapActiveMenu)
-    bpy.utils.unregister_class(SnapGridMenu)
-    bpy.utils.unregister_class(SnapToMenu)
-    # Unregister other classes here ...
+    bpy.utils.unregister_class(SetSnapToVertexOperator)
+    bpy.utils.unregister_class(SetSnapToFaceOperator)
+    bpy.utils.unregister_class(ToggleSubdivisionEditModeOperator)
+    bpy.utils.unregister_class(ToggleAutoMergeOperator)
+    bpy.utils.unregister_class(CustomPieMenu)
+    # Unregister other operators and classes as necessary.
 
-# Ensure you call the register function at the end of your script or run the script directly
+    # Unregister the keymap
+    wm = bpy.context.window_manager
+    km = wm.keyconfigs.addon.keymaps.get('3D View')
+    if km:
+        for kmi in km.keymap_items:
+            if kmi.properties.name == "VIEW3D_MT_custom_pie_menu":
+                km.keymap_items.remove(kmi)
+
+# Ensure the script runs the register function when run directly
 if __name__ == "__main__":
     register()
