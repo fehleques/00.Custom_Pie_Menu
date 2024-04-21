@@ -39,14 +39,14 @@ class LoopToolsMenu(bpy.types.Menu):
 
     def draw(self, context):
         layout = self.layout
-        layout.operator("mesh.looptools_relax", text="Relax")
-        layout.operator("mesh.looptools_space", text="Space")
-        layout.operator("mesh.looptools_circle", text="Circle")
-        layout.operator("mesh.looptools_gstretch", text="Gstretch")
-        layout.operator("mesh.looptools_bridge", text="Bridge")
-        layout.operator("mesh.looptools_spiral", text="Spiral")
-        layout.operator("mesh.looptools_curve", text="Curve")
-        layout.operator("mesh.looptools_flatten", text="Flatten")
+        layout.operator("mesh.looptools_relax", text="Relax", icon="IPO_EASE_OUT")
+        layout.operator("mesh.looptools_space", text="Space", icon="SNAP_INCREMENT")
+        layout.operator("mesh.looptools_circle", text="Circle", icon="MESH_CIRCLE")
+        # layout.operator("mesh.looptools_gstretch", text="Gstretch")
+        layout.operator("mesh.looptools_bridge", text="Bridge", icon="SNAP_EDGE")
+        layout.operator("mesh.looptools_spiral", text="Spiral", icon="FORCE_MAGNETIC")
+        layout.operator("mesh.looptools_curve", text="Curve", icon="SPHERECURVE")
+        layout.operator("mesh.looptools_flatten", text="Flatten", icon="IPO_LINEAR")
 
 # Define an operator to toggle subdivision modifier in edit mode
 class ToggleSubdivisionEditModeOperator(bpy.types.Operator):
@@ -109,31 +109,31 @@ class CustomPieMenu(bpy.types.Menu):
             pie.operator("object.empty_add", text="Add Empty", icon='EMPTY_AXIS').type = 'PLAIN_AXES'
             
             # Add single vertex
-            pie.operator("mesh.primitive_vert_add", text="Add Single Vertex", icon='VERTEXSEL')
+            pie.operator("mesh.primitive_vert_add", text="Add Single Vertex", icon='DOT')
 
         # In Edit Mesh Mode
         elif context.mode == 'EDIT_MESH':
             
             # Toggle auto merge vertices
-            pie.operator("object.toggle_auto_merge", text="Auto Merge Vertices", icon='MOD_SUBSURF')
+            pie.operator("object.toggle_auto_merge", text="Auto Merge Vertices", icon='AUTOMERGE_OFF')
             
             # Cursor to selected
             pie.operator("view3d.snap_cursor_to_selected", text="Cursor to Selected", icon='CURSOR')
             
             # Add connect vertices
-            pie.operator("mesh.vert_connect_path", text="Connect Vertices", icon='VERTEXSEL')
+            pie.operator("mesh.vert_connect_path", text="Connect Vertices", icon='MOD_SIMPLIFY')
             
             # Add subdivide operator
             pie.operator("mesh.subdivide", text="Subdivide", icon='MOD_SUBSURF')
             
             # Merge vertices
-            pie.operator("mesh.merge", text="Merge at Last", icon='SNAP_VERTEX').type = 'LAST'
+            pie.operator("mesh.merge", text="Merge at Last", icon='POINTCLOUD_POINT').type = 'LAST'
 
             # #Relax mesh
             # pie.operator("mesh.looptools_relax", text="Relax", icon='MOD_SMOOTH')
 
             # LoopTools submenu
-            pie.menu("VIEW3D_MT_looptools_menu")
+            pie.menu("VIEW3D_MT_looptools_menu", icon='SHADERFX')
 
 # Register the operators and menu
 def register():
