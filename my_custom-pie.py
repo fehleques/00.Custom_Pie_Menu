@@ -4,7 +4,7 @@ bl_info = {
     "name": "Hotkey 'Alt + W' Custom Pie Menu",
     "description": "This is a custom pie menu activated with Alt + W",
     "author": "Fernando Felix",
-    "version": (1, 0),
+    "version": (1, 1),
     "blender": (4, 1, 0),
     "location": "3D View -> Alt + W",
     "category": "Custom Pie Menu"
@@ -31,6 +31,47 @@ class SetSnapToFaceOperator(bpy.types.Operator):
         context.scene.tool_settings.snap_elements_base = {'FACE'}
         self.report({'INFO'}, "Snap to Face enabled")
         return {'FINISHED'}
+    
+# Looptools operators submenu
+class LoopToolsMenu(bpy.types.Menu):
+    bl_label = "LoopTools"
+    bl_idname = "VIEW3D_MT_looptools_menu"
+
+    def draw(self, context):
+        layout = self.layout
+        layout.operator("mesh.looptools_flatten", text="Flatten")
+        layout.operator("mesh.looptools_relax", text="Relax")
+        layout.operator("mesh.looptools_space", text="Space")
+        layout.operator("mesh.looptools_circle", text="Circle")
+        layout.operator("mesh.looptools_gstretch", text="Gstretch")
+        layout.operator("mesh.looptools_bridge", text="Bridge")
+        layout.operator("mesh.looptools_spiral", text="Spiral")
+        layout.operator("mesh.looptools_curve", text="Curve")
+        layout.operator("mesh.looptools_gstretch", text="Gstretch")
+        layout.operator("mesh.looptools_flatten", text="Flatten")
+        layout.operator("mesh.looptools_relax", text="Relax")
+        layout.operator("mesh.looptools_space", text="Space")
+        layout.operator("mesh.looptools_circle", text="Circle")
+        layout.operator("mesh.looptools_gstretch", text="Gstretch")
+        layout.operator("mesh.looptools_bridge", text="Bridge")
+        layout.operator("mesh.looptools_spiral", text="Spiral")
+        layout.operator("mesh.looptools_curve", text="Curve")
+        layout.operator("mesh.looptools_gstretch", text="Gstretch")
+        layout.operator("mesh.looptools_flatten", text="Flatten")
+        layout.operator("mesh.looptools_relax", text="Relax")
+        layout.operator("mesh.looptools_space", text="Space")
+        layout.operator("mesh.looptools_circle", text="Circle")
+        layout.operator("mesh.looptools_gstretch", text="Gstretch")
+        layout.operator("mesh.looptools_bridge", text="Bridge")
+        layout.operator("mesh.looptools_spiral", text="Spiral")
+        layout.operator("mesh.looptools_curve", text="Curve")
+        layout.operator("mesh.looptools_gstretch", text="Gstretch")
+        layout.operator("mesh.looptools_flatten", text="Flatten")
+        layout.operator("mesh.looptools_relax", text="Relax")
+        layout.operator("mesh.looptools_space", text="Space")
+        layout.operator("mesh.looptools_circle", text="Circle")
+        layout.operator("mesh.looptools_gstretch", text="Gstretch")
+        layout.operator("mesh.looptools_bridge", text="Bridge")
 
 # Define an operator to toggle subdivision modifier in edit mode
 class ToggleSubdivisionEditModeOperator(bpy.types.Operator):
@@ -97,6 +138,7 @@ class CustomPieMenu(bpy.types.Menu):
 
         # In Edit Mesh Mode
         elif context.mode == 'EDIT_MESH':
+            
             # Toggle auto merge vertices
             pie.operator("object.toggle_auto_merge", text="Auto Merge Vertices", icon='MOD_SUBSURF')
             
@@ -112,6 +154,12 @@ class CustomPieMenu(bpy.types.Menu):
             # Merge vertices
             pie.operator("mesh.merge", text="Merge at Last", icon='SNAP_VERTEX').type = 'LAST'
 
+            # #Relax mesh
+            # pie.operator("mesh.looptools_relax", text="Relax", icon='MOD_SMOOTH')
+
+            # LoopTools submenu
+            pie.menu("VIEW3D_MT_looptools_menu")
+
 # Register the operators and menu
 def register():
     bpy.utils.register_class(SetSnapToVertexOperator)
@@ -119,6 +167,7 @@ def register():
     bpy.utils.register_class(ToggleSubdivisionEditModeOperator)
     bpy.utils.register_class(ToggleAutoMergeOperator)
     bpy.utils.register_class(CustomPieMenu)
+    bpy.utils.register_class(LoopToolsMenu)
     # Register other operators and classes as necessary.
 
     # Register the keymap
@@ -134,6 +183,7 @@ def unregister():
     bpy.utils.unregister_class(ToggleSubdivisionEditModeOperator)
     bpy.utils.unregister_class(ToggleAutoMergeOperator)
     bpy.utils.unregister_class(CustomPieMenu)
+    bpy.utils.unregister_class(LoopToolsMenu)
     # Unregister other operators and classes as necessary.
 
     # Unregister the keymap
