@@ -39,7 +39,6 @@ class LoopToolsMenu(bpy.types.Menu):
 
     def draw(self, context):
         layout = self.layout
-        layout.operator("mesh.looptools_flatten", text="Flatten")
         layout.operator("mesh.looptools_relax", text="Relax")
         layout.operator("mesh.looptools_space", text="Space")
         layout.operator("mesh.looptools_circle", text="Circle")
@@ -47,31 +46,7 @@ class LoopToolsMenu(bpy.types.Menu):
         layout.operator("mesh.looptools_bridge", text="Bridge")
         layout.operator("mesh.looptools_spiral", text="Spiral")
         layout.operator("mesh.looptools_curve", text="Curve")
-        layout.operator("mesh.looptools_gstretch", text="Gstretch")
         layout.operator("mesh.looptools_flatten", text="Flatten")
-        layout.operator("mesh.looptools_relax", text="Relax")
-        layout.operator("mesh.looptools_space", text="Space")
-        layout.operator("mesh.looptools_circle", text="Circle")
-        layout.operator("mesh.looptools_gstretch", text="Gstretch")
-        layout.operator("mesh.looptools_bridge", text="Bridge")
-        layout.operator("mesh.looptools_spiral", text="Spiral")
-        layout.operator("mesh.looptools_curve", text="Curve")
-        layout.operator("mesh.looptools_gstretch", text="Gstretch")
-        layout.operator("mesh.looptools_flatten", text="Flatten")
-        layout.operator("mesh.looptools_relax", text="Relax")
-        layout.operator("mesh.looptools_space", text="Space")
-        layout.operator("mesh.looptools_circle", text="Circle")
-        layout.operator("mesh.looptools_gstretch", text="Gstretch")
-        layout.operator("mesh.looptools_bridge", text="Bridge")
-        layout.operator("mesh.looptools_spiral", text="Spiral")
-        layout.operator("mesh.looptools_curve", text="Curve")
-        layout.operator("mesh.looptools_gstretch", text="Gstretch")
-        layout.operator("mesh.looptools_flatten", text="Flatten")
-        layout.operator("mesh.looptools_relax", text="Relax")
-        layout.operator("mesh.looptools_space", text="Space")
-        layout.operator("mesh.looptools_circle", text="Circle")
-        layout.operator("mesh.looptools_gstretch", text="Gstretch")
-        layout.operator("mesh.looptools_bridge", text="Bridge")
 
 # Define an operator to toggle subdivision modifier in edit mode
 class ToggleSubdivisionEditModeOperator(bpy.types.Operator):
