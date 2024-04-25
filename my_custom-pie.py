@@ -4,7 +4,7 @@ bl_info = {
     "name": "Topology Pie Menu",
     "description": "This is a custom pie menu activated with Alt + W",
     "author": "Fernando Felix",
-    "version": (1, 1),
+    "version": (1, 2),
     "blender": (4, 1, 0),
     "location": "3D View -> Alt + W",
     "category": "Custom Pie Menu",
