@@ -1,13 +1,14 @@
 import bpy
 
 bl_info = {
-    "name": "Hotkey 'Alt + W' Custom Pie Menu",
+    "name": "Topology Pie Menu",
     "description": "This is a custom pie menu activated with Alt + W",
     "author": "Fernando Felix",
     "version": (1, 1),
     "blender": (4, 1, 0),
     "location": "3D View -> Alt + W",
-    "category": "Custom Pie Menu"
+    "category": "Custom Pie Menu",
+    #"doc_url": "https://felks.co/docs/my_custom_pie"
 }
 
 # Define a custom operator to set snap_elements_base to {'VERTEX'}
@@ -48,6 +49,30 @@ class LoopToolsMenu(bpy.types.Menu):
         layout.operator("mesh.looptools_curve", text="Curve", icon="SPHERECURVE")
         layout.operator("mesh.looptools_flatten", text="Flatten", icon="IPO_LINEAR")
 
+# Define an operator to toggle cage preview for Subdivision modifier
+class ToggleCagePreviewOperator(bpy.types.Operator):
+    """Toggle Cage Preview for Subdivision Modifier"""
+    bl_idname = "object.toggle_cage_preview"
+    bl_label = "Toggle Cage Preview"
+
+    def execute(self, context):
+        active_object = context.object
+        
+        if active_object:
+            # Try to access the Subdivision modifier
+            modifier = active_object.modifiers.get("Subdivision")
+            
+            if modifier:
+                # Toggle the show_on_cage property
+                modifier.show_on_cage = not modifier.show_on_cage
+                return {'FINISHED'}
+            else:
+                self.report({'WARNING'}, "Subdivision modifier not found")
+        else:
+            self.report({'WARNING'}, "No active object found")
+        
+        return {'CANCELLED'}
+
 # Define an operator to toggle subdivision modifier in edit mode
 class ToggleSubdivisionEditModeOperator(bpy.types.Operator):
     """Toggle Subdivision Modifier in Edit Mode"""
@@ -86,7 +111,7 @@ class ToggleAutoMergeOperator(bpy.types.Operator):
 # Define the custom pie menu
 class CustomPieMenu(bpy.types.Menu):
     """Custom Pie Menu"""
-    bl_label = "Custom Pie Menu"
+    bl_label = "My Actions"
     bl_idname = "VIEW3D_MT_custom_pie_menu"
 
     def draw(self, context):
@@ -98,6 +123,9 @@ class CustomPieMenu(bpy.types.Menu):
             # Add custom snap operators
             pie.operator("object.set_snap_to_vertex", text="Snap to Vertex", icon='VERTEXSEL')
             pie.operator("object.set_snap_to_face", text="Snap to Face", icon='FACESEL')
+            
+            # Toggle cage preview
+            pie.operator("object.toggle_cage_preview", text="Toggle Cage Preview", icon='MODIFIER')
             
             # Toggle subdivision in edit mode
             pie.operator("object.toggle_subdivision_edit_mode", text="Toggle Subdivision in Edit Mode", icon='MOD_SUBSURF')
@@ -143,6 +171,8 @@ def register():
     bpy.utils.register_class(ToggleAutoMergeOperator)
     bpy.utils.register_class(CustomPieMenu)
     bpy.utils.register_class(LoopToolsMenu)
+    bpy.utils.register_class(ToggleCagePreviewOperator)
+
     # Register other operators and classes as necessary.
 
     # Register the keymap
@@ -156,9 +186,11 @@ def unregister():
     bpy.utils.unregister_class(SetSnapToVertexOperator)
     bpy.utils.unregister_class(SetSnapToFaceOperator)
     bpy.utils.unregister_class(ToggleSubdivisionEditModeOperator)
+    bpy.utils.unregister_class(ToggleCagePreviewOperator)
     bpy.utils.unregister_class(ToggleAutoMergeOperator)
     bpy.utils.unregister_class(CustomPieMenu)
     bpy.utils.unregister_class(LoopToolsMenu)
+
     # Unregister other operators and classes as necessary.
 
     # Unregister the keymap
